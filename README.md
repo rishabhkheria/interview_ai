@@ -2,6 +2,17 @@
 
 A full-stack web application designed to help users prepare for interviews by generating AI-powered reports based on their resumes.
 
+## 🌐 Live Deployment
+
+The application is deployed on **Render**.
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | https://interview-ai-frontend-oavg.onrender.com |
+| **Backend API** | https://interview-ai-backend-0n14.onrender.com |
+
+> **Note:** Free tier services on Render may take 30–60 seconds to spin up on the first request after inactivity.
+
 ## 🏗️ Project Architecture
 
 The project follows a standard client-server (Full-Stack) architecture:
