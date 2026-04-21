@@ -2,20 +2,39 @@ import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
+import { useAuth } from '../../auth/hooks/useAuth.js'
 
 const Home = () => {
 
     const { loading, generateReport,reports } = useInterview()
+    const { handleLogout } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    const [ selectedResumeName, setSelectedResumeName ] = useState("")
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
+    const openReport = (reportId) => {
+        navigate(`/interview/${reportId}`, {
+            state: { openedFromHome: true }
+        })
+    }
+
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current.files[ 0 ]
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
-        navigate(`/interview/${data._id}`)
+        openReport(data._id)
+    }
+
+    const onLogout = async () => {
+        await handleLogout()
+        navigate('/login')
+    }
+
+    const handleResumeChange = (e) => {
+        const file = e.target.files?.[0]
+        setSelectedResumeName(file ? file.name : "")
     }
 
     if (loading) {
@@ -31,6 +50,9 @@ const Home = () => {
 
             {/* Page Header */}
             <header className='page-header'>
+                <div className='page-header__top'>
+                    <button className='logout-btn' onClick={onLogout}>Logout</button>
+                </div>
                 <h1>Create Your Custom <span className='highlight'>Interview Plan</span></h1>
                 <p>Let our AI analyze the job requirements and your unique profile to build a winning strategy.</p>
             </header>
@@ -81,8 +103,19 @@ const Home = () => {
                                 </span>
                                 <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
                                 <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+                                <input
+                                    ref={resumeInputRef}
+                                    hidden
+                                    type='file'
+                                    id='resume'
+                                    name='resume'
+                                    accept='.pdf,.docx'
+                                    onChange={handleResumeChange}
+                                />
                             </label>
+                            {selectedResumeName && (
+                                <p className='upload-file-name'>Selected: {selectedResumeName}</p>
+                            )}
                         </div>
 
                         {/* OR Divider */}
@@ -128,7 +161,7 @@ const Home = () => {
                     <h2>My Recent Interview Plans</h2>
                     <ul className='reports-list'>
                         {reports.map(report => (
-                            <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
+                            <li key={report._id} className='report-item' onClick={() => openReport(report._id)}>
                                 <h3>{report.title || 'Untitled Position'}</h3>
                                 <p className='report-meta'>Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
                                 <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>

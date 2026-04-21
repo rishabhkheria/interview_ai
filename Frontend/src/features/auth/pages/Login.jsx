@@ -10,11 +10,19 @@ const Login = () => {
   //two way binding
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleLogin({ email, password });
-    navigate("/");
+    setError("");
+    const result = await handleLogin({ email, password });
+
+    if (result?.success) {
+      navigate("/");
+      return;
+    }
+
+    setError(result?.message || "Unable to login. Please try again.");
   };
 
   if (loading) {
@@ -57,6 +65,7 @@ const Login = () => {
           </div>
           <button className="button primary-button">Login</button>
         </form>
+        {error && <p className="form-error">{error}</p>}
         <p>
           Don't have an account? <Link to={"/register"}>Register</Link>
         </p>

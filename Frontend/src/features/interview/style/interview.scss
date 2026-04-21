@@ -12,9 +12,9 @@ $accent: #ff2d78;
 $font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
 // severity palette
-$severity-high: #ff4d4d;
-$severity-medium: #f5a623;
-$severity-low: #3fb950;
+$severity-high: #ff6b6b;
+$severity-medium: #ffd166;
+$severity-low: #4ade80;
 
 *::-webkit-scrollbar {
     display: none;
@@ -448,35 +448,62 @@ $severity-low: #3fb950;
 
     &__list {
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
         gap: 0.5rem;
     }
 }
 
 .skill-tag {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 0.75rem;
     font-size: 0.775rem;
-    font-weight: 500;
-    padding: 0.3rem 0.7rem;
+    font-weight: 600;
+    padding: 0.45rem 0.7rem;
     border-radius: 0.4rem;
     border: 1px solid;
     cursor: default;
 
+    &__name {
+        color: $text-primary;
+        line-height: 1.3;
+    }
+
+    &__severity {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+    }
+
     &--high {
-        color: $severity-high;
-        background-color: rgba($severity-high, 0.1);
-        border-color: rgba($severity-high, 0.25);
+        background-color: rgba($severity-high, 0.16);
+        border-color: rgba($severity-high, 0.5);
+
+        .skill-tag__severity {
+            color: $severity-high;
+        }
     }
 
     &--medium {
-        color: $severity-medium;
-        background-color: rgba($severity-medium, 0.1);
-        border-color: rgba($severity-medium, 0.25);
+        background-color: rgba($severity-medium, 0.16);
+        border-color: rgba($severity-medium, 0.5);
+
+        .skill-tag__severity {
+            color: $severity-medium;
+        }
     }
 
     &--low {
-        color: $severity-low;
-        background-color: rgba($severity-low, 0.1);
-        border-color: rgba($severity-low, 0.25);
+        background-color: rgba($severity-low, 0.16);
+        border-color: rgba($severity-low, 0.5);
+
+        .skill-tag__severity {
+            color: $severity-low;
+        }
     }
 }
 

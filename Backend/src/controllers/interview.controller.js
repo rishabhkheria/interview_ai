@@ -2,6 +2,30 @@ const pdfParse = require("pdf-parse");
 const { generateInterviewReport, generateResumePdf } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReport.model");
 
+function normalizeSkillGaps(skillGaps = []) {
+    const allowedSeverities = new Set(["low", "medium", "high"])
+
+    const normalized = skillGaps.map((gap) => {
+        const rawSeverity = String(gap?.severity || "medium").toLowerCase()
+        const severity = allowedSeverities.has(rawSeverity) ? rawSeverity : "medium"
+
+        return {
+            ...gap,
+            severity
+        }
+    })
+
+    const hasHigh = normalized.some((gap) => gap.severity === "high")
+
+    if (!hasHigh && normalized.length > 0) {
+        const mediumIndex = normalized.findIndex((gap) => gap.severity === "medium")
+        const targetIndex = mediumIndex >= 0 ? mediumIndex : 0
+        normalized[targetIndex].severity = "high"
+    }
+
+    return normalized
+}
+
 
 /**
  * @description Controller to generate interview report based on user self description, resume and job description.
@@ -17,13 +41,16 @@ async function generateInterviewReportController(req, res){
         selfDescription,
         jobDescription
      });
+
+    const normalizedSkillGaps = normalizeSkillGaps(interviewReportByAi?.skillGaps)
     
     const interviewReport = await interviewReportModel.create({
         user: req.user.id,
         resume: resumeContent.text,
         selfDescription,
         jobDescription,
-        ...interviewReportByAi
+        ...interviewReportByAi,
+        skillGaps: normalizedSkillGaps
     })
 
     res.status(200).json({
@@ -47,6 +74,11 @@ async function getInterviewReportByIdController(req, res) {
             message: "Interview report not found."
         })
     }
+
+    const normalizedSkillGaps = normalizeSkillGaps(interviewReport.skillGaps)
+    interviewReport.skillGaps = normalizedSkillGaps
+
+    await interviewReport.save()
 
     res.status(200).json({
         message: "Interview report fetched successfully.",

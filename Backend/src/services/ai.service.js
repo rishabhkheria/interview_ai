@@ -137,6 +137,12 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         Resume: ${resume}
                         Self Description: ${selfDescription}
                         Job Description: ${jobDescription}
+
+                        Severity rules for skillGaps:
+                        - Use only: low, medium, high
+                        - Mark a gap as high only if it is role-critical and strongly impacts interview success
+                        - If candidate is missing at least one role-critical skill from the job description, include at least one high severity gap
+                        - Do not assign all gaps as low unless the candidate profile is already very close to the role requirements
                     `
 
     const response = await ai.models.generateContent({
