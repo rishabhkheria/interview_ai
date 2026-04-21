@@ -1,6 +1,6 @@
 # Interview AI
 
-A full-stack web application designed to help users prepare for interviews by generating AI-powered reports based on their resumes.
+A full-stack web application designed to help users prepare for interviews by generating AI-powered reports based on their resumes. Fully responsive and cross-platform — works seamlessly on **Desktop, Android, and iOS**.
 
 ## 🌐 Live Deployment
 

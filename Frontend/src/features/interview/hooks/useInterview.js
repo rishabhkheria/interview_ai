@@ -51,38 +51,44 @@ export const useInterview = () => {
         let response = null
         try {
             response = await getAllInterviewReports()
-            setReports(response.interviewReports)
+            setReports(response?.interviewReports || [])
         } catch (error) {
             console.log(error)
+            setReports([])
         } finally {
             setLoading(false)
         }
 
-        return response.interviewReports
+        return response?.interviewReports || []
     }
 
     const getResumePdf = async (interviewReportId) => {
         setLoading(true)
-        let response = null
         try {
-            response = await generateResumePdf({ interviewReportId })
+            const response = await generateResumePdf({ interviewReportId })
             const blob = new Blob([response], { type: "application/pdf" })
             const url = window.URL.createObjectURL(blob)
-            const link = document.createElement("a")
-            link.href = url
-            link.setAttribute("download", `resume_${interviewReportId}.pdf`)
-            link.setAttribute("target", "_blank")
-            link.style.display = "none"
-            document.body.appendChild(link)
-            link.click()
 
-            // Mobile-safe cleanup
-            setTimeout(() => {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+
+            if (isIOS) {
+                // iOS Safari: download attribute doesn't work on blob URLs
+                // open in new tab where user can save from Safari viewer
+                window.open(url, '_blank')
+            } else {
+                // Android & Desktop: anchor download with MouseEvent
+                const link = document.createElement("a")
+                link.href = url
+                link.download = `resume_${interviewReportId}.pdf`
+                link.rel = "noopener"
+                link.target = "_blank"
+                document.body.appendChild(link)
+                link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }))
                 document.body.removeChild(link)
-                window.URL.revokeObjectURL(url)
-            }, 500)
-        }
-        catch (error) {
+            }
+
+            setTimeout(() => window.URL.revokeObjectURL(url), 5000)
+        } catch (error) {
             console.log(error)
         } finally {
             setLoading(false)
