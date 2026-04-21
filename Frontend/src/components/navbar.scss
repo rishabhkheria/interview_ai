@@ -1,0 +1,358 @@
+@use "sass:color";
+
+$bg-card: #161b22;
+$border-color: #2a3348;
+$text-primary: #e6edf3;
+$text-muted: #7d8590;
+$accent: #ff2d78;
+$font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+.main-navbar {
+    width: 100%;
+    height: 70px;
+    background-color: $bg-card;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    font-family: $font-stack;
+
+    &__brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: $text-primary;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .highlight {
+            color: $accent;
+        }
+
+        .main-navbar__logo {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+    }
+
+    &__profile {
+        position: relative;
+    }
+
+    &__avatar-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 2rem;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    }
+
+    &__greeting {
+        color: $text-primary;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: none;
+        @media (min-width: 600px) {
+            display: block;
+        }
+    }
+
+    &__avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba($accent, 0.15);
+        color: $accent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid $accent;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    &__dropdown {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        background-color: $bg-card;
+        border: 1px solid $border-color;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        min-width: 180px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        button, a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            background: transparent;
+            border: none;
+            color: $text-primary;
+            font-size: 0.875rem;
+            text-align: left;
+            border-radius: 0.35rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-family: inherit;
+
+            svg {
+                color: $text-muted;
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+                color: $accent;
+                
+                svg {
+                    color: $accent;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 0 1rem;
+        height: 60px;
+    }
+}
+
+// ── Account Info Modal ───────────────────────────────────────────────────────
+.account-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+.account-modal {
+    background-color: $bg-card;
+    border: 1px solid $border-color;
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    width: 90%;
+    max-width: 360px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-sizing: border-box;
+
+    &__close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        color: $text-muted;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+
+        &:hover {
+            color: $text-primary;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    &__edit-btn {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: transparent;
+        border: none;
+        color: $text-muted;
+        cursor: pointer;
+        padding: 0.35rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+
+        &:hover {
+            color: $accent;
+            background-color: rgba($accent, 0.1);
+        }
+    }
+
+    &__avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba($accent, 0.15);
+        border: 3px solid $accent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $accent;
+        margin-bottom: 1rem;
+    }
+
+    &__username {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-primary;
+        text-align: center;
+    }
+
+    &__email {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.9rem;
+        color: $text-muted;
+        text-align: center;
+    }
+
+    &__fullname {
+        margin: 0;
+        font-size: 0.85rem;
+        color: color.adjust($text-muted, $lightness: 10%);
+        text-transform: capitalize;
+    }
+}
+
+.edit-profile-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        
+        label {
+            font-size: 0.75rem;
+            color: $text-muted;
+            margin-left: 0.2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background-color: $bg-card;
+            border: 1px solid $border-color;
+            border-radius: 0.4rem;
+            color: $text-primary;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: $accent;
+            }
+        }
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+
+        button {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid $border-color;
+            color: $text-primary;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .btn-save {
+            background-color: $accent;
+            border: 1px solid $accent;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust($accent, $lightness: -5%);
+            }
+        }
+    }
+}
+
+.toast-notification {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2ea043; // Github success green
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 1001;
+    animation: toastPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes toastPop {
+    0% { opacity: 0; transform: translate(-50%, 20px) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

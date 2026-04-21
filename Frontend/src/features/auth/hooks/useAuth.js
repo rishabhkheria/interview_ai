@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../auth.context";
-import { login, register, logout, getMe } from "../services/auth.api";
+import { login, register, logout, getMe, updateProfile } from "../services/auth.api";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -20,10 +20,10 @@ export const useAuth = () => {
     }
   };
 
-  const handleRegister = async ({ username, email, password }) => {
+  const handleRegister = async ({ username, email, password, firstName, lastName }) => {
     setLoading(true);
     try {
-      const data = await register({ username, email, password });
+      const data = await register({ username, email, password, firstName, lastName });
       setUser(data.user);
       return { success: true, message: data?.message };
     } catch (err) {
@@ -40,6 +40,19 @@ export const useAuth = () => {
       const data = await logout();
       setUser(null);
     } catch (err) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateProfile = async (data) => {
+    setLoading(true);
+    try {
+      const res = await updateProfile(data);
+      setUser(res.user);
+      return { success: true, message: res.message };
+    } catch (err) {
+      return { success: false, message: err.message };
     } finally {
       setLoading(false);
     }
@@ -62,5 +75,5 @@ export const useAuth = () => {
     }, [])
 
     
-  return { user, loading, handleLogin, handleRegister, handleLogout };
+  return { user, loading, handleLogin, handleRegister, handleLogout, handleUpdateProfile };
 };

@@ -7,6 +7,14 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
 
+    firstName: {
+        type: String,
+        default: ""
+    },
+    lastName: {
+        type: String,
+        default: ""
+    },
     email:{
         type:String,
         unique:[true, "Account already exists with this email address"],

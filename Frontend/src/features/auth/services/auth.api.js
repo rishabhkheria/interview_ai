@@ -5,7 +5,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export async function register({ username, email, password }) {
+export async function register({ username, email, password, firstName, lastName }) {
   try {
     const response = await api.post(
       "/api/auth/register",
@@ -13,6 +13,8 @@ export async function register({ username, email, password }) {
         username,
         email,
         password,
+        firstName,
+        lastName,
       },
       //credentials ka access de dega, kyuki axios ka jab use krte h wo by default cookies ka access nhi dega server ko
     );
@@ -50,5 +52,18 @@ export async function getMe() {
     return response.data;
   } catch (err) {
     throw new Error(err?.response?.data?.message || "Failed to fetch user");
+  }
+}
+
+export async function updateProfile({ firstName, lastName, username }) {
+  try {
+    const response = await api.put("/api/auth/update-profile", {
+      firstName,
+      lastName,
+      username
+    });
+    return response.data;
+  } catch (err) {
+    throw new Error(err?.response?.data?.message || "Failed to update profile");
   }
 }

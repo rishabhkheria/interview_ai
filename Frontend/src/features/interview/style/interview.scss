@@ -23,14 +23,51 @@ $severity-low: #4ade80;
 // ── Page Shell ────────────────────────────────────────────────────────────────
 .interview-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     background-color: $bg-page;
     color: $text-primary;
     font-family: $font-stack;
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
     padding: 1.5rem;
     box-sizing: border-box;
+
+    @media (max-width: 900px) {
+        padding: 0.75rem;
+    }
+}
+
+.back-btn-container {
+    width: 100%;
+    max-width: 1280px;
+    margin-bottom: 1rem;
+    display: flex;
+}
+
+.back-home-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: none;
+    color: $text-muted;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem 0.2rem 0;
+    transition: color 0.2s;
+    font-family: inherit;
+
+    &:hover {
+        color: $text-primary;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 // ── 3-Column Layout ───────────────────────────────────────────────────────────
@@ -43,12 +80,21 @@ $severity-low: #4ade80;
     border: 1px solid $border-color;
     border-radius: 1rem;
     justify-content: space-between;
+
+    @media (max-width: 900px) {
+        flex-direction: column;
+    }
 }
 
 .interview-divider {
     width: 1px;
     background-color: $border-color;
     flex-shrink: 0;
+
+    @media (max-width: 900px) {
+        width: 100%;
+        height: 1px;
+    }
 }
 
 // ── Left Nav ─────────────────────────────────────────────────────────────────
@@ -59,7 +105,31 @@ $severity-low: #4ade80;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 0.25rem;
+    gap: 1.25rem;
+
+    .nav-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    @media (max-width: 900px) {
+        width: 100%;
+        padding: 1rem;
+        flex-direction: column;
+        
+        .nav-content {
+            flex-direction: row;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            
+            // hide scrollbar but keep scroll functionality
+            scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
 
 
 
@@ -103,6 +173,11 @@ $severity-low: #4ade80;
                 stroke: $accent;
             }
         }
+        
+        @media (max-width: 900px) {
+            white-space: nowrap;
+            justify-content: center;
+        }
     }
 
     &__icon {
@@ -118,9 +193,16 @@ $severity-low: #4ade80;
     padding: 1.75rem 2rem;
     overflow-y: auto;
     min-height: initial;
-    max-height: calc(100vh - 3rem);
+    max-height: calc(100vh - 100px);
     padding-bottom: 5rem;
     align-items: flex-start;
+
+    @media (max-width: 900px) {
+        padding: 1rem;
+        max-height: none;
+        overflow-y: visible;
+        padding-bottom: 2rem;
+    }
 
 
 
@@ -363,6 +445,24 @@ $severity-low: #4ade80;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+
+    @media (max-width: 900px) {
+        width: 100%;
+        padding: 1rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 1rem;
+        
+        .sidebar-divider {
+            display: none;
+        }
+
+        > * {
+            flex: 1;
+            min-width: 200px;
+        }
+    }
 }
 
 .sidebar-divider {

@@ -37,5 +37,12 @@ authRouter.get("/logout", authController.logoutUserController)
 // isme ek middle ware bhi use hoga jo ki humein btayega ki request kis user ne ki h
 authRouter.get("/get-me", authMiddleware.authUser, authController.getMeController)
 
+/**
+ * @route PUT /api/auth/update-profile
+ * @description update user profile (firstName, lastName, username)
+ * @access private
+ */
+authRouter.put("/update-profile", authMiddleware.authUser, authController.updateProfileController)
+
 
 module.exports = authRouter

@@ -19,7 +19,7 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
 // ── Page Shell ───────────────────────────────────────────────────────────────
 .home-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     background-color: $bg-page;
     color: $text-primary;
     font-family: $font-stack;
@@ -27,9 +27,14 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 3rem 1.5rem;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
     gap: 2rem;
+
+    @media (max-width: 768px) {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
 }
 
 // ── Page Header ──────────────────────────────────────────────────────────────
@@ -49,6 +54,10 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         font-weight: 700;
         margin-bottom: 0.5rem;
         color: $text-primary;
+
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
     }
 
     p {
@@ -93,6 +102,10 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     &__body {
         display: flex;
         min-height: 520px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
     }
 
     &__footer {
@@ -114,6 +127,11 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     width: 1px;
     background-color: $border-color;
     flex-shrink: 0;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 1px;
+    }
 }
 
 .panel {
@@ -169,6 +187,10 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         &--short {
             flex: unset;
             height: 96px;
+
+            @media (max-width: 768px) {
+                height: 120px;
+            }
         }
     }
 
@@ -181,6 +203,11 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
             right: 2rem;
             font-size: 0.75rem;
             color: $text-muted;
+
+            @media (max-width: 768px) {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
         }
     }
 

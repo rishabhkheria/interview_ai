@@ -10,10 +10,10 @@ const tokenBlacklistModel = require("../models/blacklist.model")
  * @access Public
  */
 async function registerUserController(req, res) {
-    const { username, email, password } = req.body
+    const { username, email, password, firstName, lastName } = req.body
 
     if (!username || !email || !password) {
-        return res.sattus(400).json({
+        return res.status(400).json({
             message: "Please provide username, email and password"
         })
     }
@@ -23,43 +23,63 @@ async function registerUserController(req, res) {
     })
 
     if (isUserAlreadyExists) {
-        /* isUserAlreadyExists.username == username */
-        return res.status(400).json({
-            message: "Account already exists with this email address or username"
-        })
+        if (isUserAlreadyExists.email === email) {
+            return res.status(400).json({ message: "Email is already registered" });
+        }
+        if (isUserAlreadyExists.username === username) {
+            return res.status(400).json({ message: "Username already taken" });
+        }
+        return res.status(400).json({ message: "Account already exists." });
     }
 
-    const hash = await bcrypt.hash(password, 10)
+    try {
+        const hash = await bcrypt.hash(password, 10)
 
-    const user = await userModel.create({
-        username,
-        email,
-        password: hash
-    })
+        const user = await userModel.create({
+            username,
+            email,
+            password: hash,
+            firstName: firstName || "",
+            lastName: lastName || ""
+        })
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        )
 
-    const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
-        secure: isProduction,
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
-    });
+        const isProduction = process.env.NODE_ENV === "production";
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: isProduction ? "none" : "lax",
+            secure: isProduction,
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
 
-    res.status(201).json({
-        message: "User registered successfully",
-        // agar mobile app hoti token response mei bhi bhejte
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
-        } // password nhi jata response mei by default
-    })
+        res.status(201).json({
+            message: "User registered successfully",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName
+            }
+        })
+    } catch (error) {
+        if (error.code === 11000) {
+            const errMessage = error.message.toLowerCase();
+            if (errMessage.includes('email')) {
+                return res.status(400).json({ message: "Email is already registered" });
+            }
+            if (errMessage.includes('username')) {
+                return res.status(400).json({ message: "Username already taken" });
+            }
+            return res.status(400).json({ message: "Account already exists" });
+        }
+        res.status(500).json({ message: error.message || "Registration failed." });
+    }
 }
 
 /**
@@ -105,7 +125,9 @@ async function loginUserController(req, res) {
         user: {
             id: user._id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
         }
     })
 
@@ -149,9 +171,54 @@ async function getMeController(req, res) {
         user: {
             id: user._id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
         }
     })
 }
 
-module.exports = { registerUserController, loginUserController, logoutUserController, getMeController }
+/**
+ * @name updateProfileController
+ * @description update user profile details like firstName, lastName, username
+ * @access private
+ */
+async function updateProfileController(req, res) {
+    const { firstName, lastName, username } = req.body;
+
+    // Build update object dynamically
+    const updateData = {};
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (username !== undefined) updateData.username = username;
+
+    try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+            req.user.id,
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Profile updated successfully.",
+            user: {
+                id: updatedUser._id,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName
+            }
+        });
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: "Username already taken." });
+        }
+        res.status(500).json({ message: "Failed to update profile." });
+    }
+}
+
+module.exports = { registerUserController, loginUserController, logoutUserController, getMeController, updateProfileController }
