@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router"; // iss hook ka use krke hum login se register page pr navigate kr skte
 import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
+  useEffect(() => {
+    document.title = "Register | Interview AI";
+  }, []);
   const navigate = useNavigate();
 
   //two way binding

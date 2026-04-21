@@ -1,10 +1,13 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../../auth/hooks/useAuth.js'
 
 const Home = () => {
+    useEffect(() => {
+        document.title = "Interview AI"
+    }, [])
 
     const { loading, generateReport,reports } = useInterview()
     const { handleLogout } = useAuth()

@@ -58,6 +58,9 @@ const RoadMapDay = ({ day }) => (
 
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
+    useEffect(() => {
+        document.title = "Your Report | Interview AI"
+    }, [])
     const [ activeNav, setActiveNav ] = useState('technical')
     const [ downloadingResume, setDownloadingResume ] = useState(false)
     const { report, getReportById, loading, getResumePdf } = useInterview()
