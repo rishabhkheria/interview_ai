@@ -100,6 +100,7 @@ const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
 const puppeteer = require("puppeteer")
+const cacheService = require("./cache.service")
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
@@ -132,6 +133,11 @@ const interviewReportSchema = z.object({
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
 
+    const cacheKey = cacheService.generateKey(resume, selfDescription, jobDescription);
+    if (cacheService.has(cacheKey)) {
+        console.log(`[Cache Hit] Serving interview report from ${cacheService.getCacheType()}`);
+        return cacheService.get(cacheKey);
+    }
 
     const prompt = `Generate an interview report for a candidate with the following details:
                         Resume: ${resume}
@@ -153,13 +159,15 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
             responseJsonSchema: z.toJSONSchema(interviewReportSchema, {
                 target: "draft-07",
             }),
+            thinkingConfig: {
+                thinkingLevel: "low"
+            }
         }
     })
 
-    return JSON.parse(response.text);
-
-    // const report = JSON.parse(response.text);
-    // console.dir(report, { depth: null });
+    const result = JSON.parse(response.text);
+    cacheService.set(cacheKey, result);
+    return result;
 
 
 }
